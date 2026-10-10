@@ -10,6 +10,8 @@ A Drizzle-based ORM with a model-driven approach.
 
 [日本語版はこちら](./README.ja.md)
 
+[Documentation](https://kosame-documents.kosame-project.workers.dev/)
+
 ## Features
 
 - Class-based Models on top of Drizzle (`class User extends Model {}`)
