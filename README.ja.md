@@ -8,6 +8,8 @@
 
 [English README](./README.md)
 
+[ドキュメント](https://kosame-documents.kosame-project.workers.dev/ja/)
+
 ## 特徴
 
 - Drizzleの上に構築されたクラスベースのModel（`class User extends Model {}`）
