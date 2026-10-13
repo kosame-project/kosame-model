@@ -37,3 +37,13 @@ bun add kosame
 ```bash
 npm install kosame
 ```
+
+## Agent skill
+
+Kosame ships a skill that teaches coding agents (such as Claude Code) how to write Kosame code. After installing the package, copy it into your project:
+
+```bash
+npx kosame skills install --claude-md
+```
+
+This puts the skill in `.claude/skills/kosame` and adds a line to `CLAUDE.md` that points to it. Run the command again after upgrading `kosame` to update the skill.
