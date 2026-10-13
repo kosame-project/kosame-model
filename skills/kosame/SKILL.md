@@ -1,6 +1,6 @@
 ---
 name: kosame
-description: How to write code with Kosame (npm package `kosame`), a model-driven layer on top of Drizzle ORM. Use this whenever a project imports from "kosame", defines classes that `extends Model` with `static table`, calls `createContext`, uses `context.<collection>.add()/find()`, hasMany/belongsTo relations, Model hooks (beforeCreate/beforeUpdate/beforeDelete), `context.transaction`, SoftDeletable, or `context.raw`; and also when the user wants to add Kosame to an existing Drizzle project or asks how to do something with it, even if they only say "Drizzle model" or "model-driven ORM".
+description: Use this whenever a project depends on the `kosame` npm package (look for `import ... from "kosame"`, `kosame/pg`, `kosame/mysql`, `kosame/sqlite`, or classes that `extends Model` with `static table`), or when asked to add Kosame to a Drizzle project. Covers defining Models, createContext, add/find/update/save/delete, hasMany/belongsTo with include, hooks, transactions with afterCommit, SoftDeletable, validation and context.raw. Kosame has its own API that is not Active Record, Prisma or Knex, so do not guess it: read this skill first.
 ---
 
 # Kosame
@@ -60,6 +60,83 @@ const found = await context.users.find(user.id);
 - **Mixins** are plain TypeScript mixin functions. Use Kosame's `Constructor<T>` type, because `Model` is abstract.
 - **`context.raw` is plain Drizzle.** Use it for anything Kosame cannot express; it returns plain rows and skips hooks and validation.
 - **Name collisions:** if another library also exports `Model`, import with an alias: `import { Model as KosameModel } from "kosame"`.
+
+## Recipes
+
+Soft delete (the `deletedAt` column is named `deletedAt` in the database by default; pass a name to `deletedAtColumn("deleted_at")` for another):
+
+```ts
+import { Model, SoftDeletable } from "kosame";
+import { deletedAtColumn } from "kosame/pg"; // or kosame/mysql, kosame/sqlite
+
+export const usersTable = pgTable("users", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  deletedAt: deletedAtColumn(),
+});
+
+export class User extends SoftDeletable(Model) {
+  static table = usersTable;
+  declare id: number;
+  declare name: string;
+  declare deletedAt: Date | null;
+}
+
+await user.delete();     // soft delete
+await user.hardDelete(); // real DELETE
+```
+
+Relations and `include`:
+
+```ts
+export class User extends Model {
+  static table = usersTable;
+  static relations = { posts: hasMany(() => Post, { foreignKey: "authorId" }) };
+}
+export class Post extends Model {
+  static table = postsTable;
+  static relations = { author: belongsTo(() => User, { foreignKey: "authorId" }) };
+}
+export const context = createContext(db, { users: User, posts: Post });
+
+const user = await context.users.find(id, { include: ["posts"] }); // user.posts is an array
+```
+
+Hook:
+
+```ts
+export class User extends Model {
+  static table = usersTable;
+  override async beforeCreate() {
+    if (this.name.length < 2) throw new Error("name too short");
+  }
+}
+```
+
+Transaction with work after the commit:
+
+```ts
+await context.transaction(async (txContext) => {
+  const user = await txContext.users.add({ name, email });
+  await txContext.posts.add({ authorId: user.id, title });
+  txContext.afterCommit(async () => { await sendWelcomeEmail(email); });
+});
+```
+
+Update by id (two round trips) and the one-statement alternative:
+
+```ts
+const user = await context.users.find(id);
+if (user) await user.update({ name });
+
+await context.raw.update(usersTable).set({ name }).where(eq(usersTable.id, id));
+```
+
+List rows (no collection API for it, so plain Drizzle):
+
+```ts
+const active = await context.raw.select().from(usersTable).where(isNull(usersTable.deletedAt));
+```
 
 ## Known limits (do not work around them silently)
 
