@@ -71,5 +71,8 @@ Change history for this project. Follows the [Keep a Changelog](https://keepacha
   - Added a GitHub Actions CI workflow (`.github/workflows/ci.yml`): triggers on `push` (all branches, no `pull_request`), runs typecheck, the regular test suite, and the real-DB smoke tests via PostgreSQL/MySQL service containers
   - Added a type-level assertion mechanism (`Equal<A, B>`/`expectType<Expected>(actual)`, self-written, zero dependencies) in `src/test-types`, plus tests verifying `context.users`/`context.raw` and other inferred types resolve as expected
   - This completes the Phase 1–9 implementation plan
+- **Agent skill and CLI**
+  - Added a `kosame` skill (`skills/kosame`: `SKILL.md` plus `references/` copied from the documentation site's English pages) and ship it in the package (`files: ["dist", "skills"]`)
+  - Added the `kosame skills install [--dir <project>] [--claude-md]` command (`bin`, `src/cli`): copies the skill into `.claude/skills/kosame`, replaces an existing install, and optionally appends a pointer line to `CLAUDE.md`
 
 [Unreleased]: https://github.com/kosame-project/kosame-orm

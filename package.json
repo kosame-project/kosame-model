@@ -22,6 +22,9 @@
       "default": "./dist/sqlite.js"
     }
   },
+  "bin": {
+    "kosame": "./dist/cli/index.js"
+  },
   "types": "./dist/index.d.ts",
   "files": [
     "dist",

@@ -36,3 +36,12 @@ bun add kosame
 npm install kosame
 ```
 
+## エージェント用スキル
+
+KosameにはClaude Codeなどのコーディングエージェントに、Kosameの書き方を教えるスキルが同梱されています。パッケージをインストールしたあと、次のコマンドでプロジェクトにコピーします。
+
+```bash
+npx kosame skills install --claude-md
+```
+
+スキルは`.claude/skills/kosame`に置かれ、`CLAUDE.md`にそれを指す1行が追加されます。`kosame`をアップグレードしたあとは、同じコマンドをもう一度実行するとスキルが更新されます。

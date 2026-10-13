@@ -71,5 +71,8 @@
   - GitHub Actions CI（`.github/workflows/ci.yml`）を追加。`push`トリガー（全ブランチ、`pull_request`は使わない）、PostgreSQL/MySQLのservice containersで`typecheck`・通常のテスト・実DBスモークテストを実行
   - `src/test-types`に型レベルアサーションの仕組み（`Equal<A,B>`/`expectType<Expected>(actual)`、自作・ゼロ依存）を追加し、`context.users`や`context.raw`等の推論結果が期待通りであることを検証するテストを追加
   - これでPhase 1〜9の実装計画が完了
+- **エージェント用スキルとCLI**
+  - `kosame`スキル（`skills/kosame`: `SKILL.md`と、ドキュメントサイトの英語ページをコピーした`references/`）を追加し、パッケージに同梱（`files: ["dist", "skills"]`）
+  - `kosame skills install [--dir <project>] [--claude-md]`コマンドを追加（`bin`、`src/cli`）: スキルを`.claude/skills/kosame`にコピーし、既存のインストールは置き換え、必要に応じて`CLAUDE.md`にスキルを指す1行を追記
 
 [Unreleased]: https://github.com/kosame-project/kosame-orm
