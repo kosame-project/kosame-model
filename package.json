@@ -23,7 +23,7 @@
     }
   },
   "bin": {
-    "kosame": "./dist/cli/index.js"
+    "kosame": "dist/cli/index.js"
   },
   "types": "./dist/index.d.ts",
   "files": [
