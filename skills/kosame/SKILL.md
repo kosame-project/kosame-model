@@ -64,7 +64,7 @@ const found = await context.users.find(user.id);
 ## Known limits (do not work around them silently)
 
 - The collection API is `add()` and `find(pk)` only. There is no multi-row query; for lists or filters use `context.raw`. Loading a relation for many rows one by one is slow (one call per row).
-- `update` on an instance does a read then a write, so it costs an extra round trip compared with a plain Drizzle update.
+- There is no update-by-id on the collection: you need an instance first, so updating a row by id is `find(id)` then `update()`, two round trips (a plain Drizzle update is one). `update()` itself is a single UPDATE. For a one-statement update use `context.raw`.
 - `include` cannot be nested, and composite primary or foreign keys are not supported.
 - With `SoftDeletable`, soft-deleted rows are always excluded from relations; there is no `withDeleted` opt-out there.
 - MySQL: tables without a primary key cannot use `add()` (rows are re-selected by primary key after insert).
